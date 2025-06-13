@@ -7,7 +7,9 @@ Este projeto simula uma arquitetura serverless utilizando **Docker**, **LocalSta
 ## 🚀 Passos para subir o ambiente
 
 1. **Clone o projeto** (ou extraia o `.zip`);
-- [https://github.com/lucas62/serveless-localstack](https://github.com/lucas62/serveless-localstack)
+```bash
+git clone https://github.com/lucas62/serveless-localstack.git
+```
 
 2. **Execute o comando abaixo no diretório raiz**:
 
