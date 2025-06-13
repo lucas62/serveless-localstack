@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: ./api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - localstack
+    environment:
+      - LOCALSTACK_HOST=localstack
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_HOST=localstack
+      - QUEUE_NAME=UserQueue
+    networks:
+      - default
+
+  worker:
+    build:
+      context: ./worker
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      - LOCALSTACK_HOST=localstack
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_HOST=localstack
+      - QUEUE_NAME=UserQueue
+    networks:
+      - default
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,dynamodb
+      - EDGE_PORT=4566
+    volumes:
+      - "./init-localstack.sh:/etc/localstack/init/ready.d/init.sh"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: curl -f http://localhost:4566/_localstack/health || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
